@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<head>
+    <meta charset="UTF-8">
+    <title>Taller MongoDB</title>
+</head>
+<body>
+    <h1>Taller de MongoDB</h1>
+    <h2>Agregar nueva mercancia</h2>
+    <form action = "http://localhost:3000/guardar/", method = "POST">
+        <div></div><input type="text" id="nombre" name="nombre" placeholder="Nombre..."></div>
+        <div><textarea id="descripcion" name="descripcion" placeholder="Descripción..."></textarea></div>
+        <div><input type="text" id="anio" name="anio" placeholder="Año..."></div>
+        <select name="tipo" id="tipo">
+            <option value="Ropa">Ropa</option>
+            <option value="Mueble">Mueble</option>
+            <option value="Joyeria">Joyeria</option>
+            <option value="Otro">Otro</option>
+        </select>
+        <button type="submit">Guardar</button>
+    </form>
+
+    <h2>Buscar Mercancia</h2>
+    <h3>Por Tipo...</h3>
+    <select id="tipo_busqueda">
+        <option value="Ropa">Ropa</option>
+        <option value="Mueble">Mueble</option>
+        <option value="Joyeria">Joyeria</option>
+        <option value="Otro">Otro</option>
+    </select>
+    <button type="button" onclick="buscarTipo()">Buscar</button>
+
+    <h3>Por Nombre...</h3>
+    <input type="text" id="nombre_busqueda" name="nombre_busqueda">
+    <button type="button" onclick="buscarNombre()">Buscar</button>
+
+    <h2>Resultados</h2>
+    <Label id="rep_nombre"></Label>
+    <p id="rep_descripcion"></p>
+
+    <script>
+        function buscarNombre(){
+            const Http = new XMLHttpRequest();
+            busqueda = document.getElementById("nombre_busqueda").value;
+            Http.addEventListener("load", respuestaBuscarNombre);
+            const url = 'http://localhost:3000/busqueda_nombre/' + busqueda;
+            Http.open("GET", url);
+            Http.send();
+        }
+
+        function respuestaBuscarNombre(){
+            var respuesta = JSON.parse(this.responseText);
+            var mercancia = respuesta["mercancia"]
+            document.getElementById("rep_nombre").innerHTML = mercancia["nombre"];
+            document.getElementById("rep_descripcion").innerHTML = mercancia["descripcion"];
+        }
+
+        function buscarTipo(){
+            const Http = new XMLHttpRequest();
+            busqueda = document.getElementById("tipo_busqueda").value;
+            Http.addEventListener("load", respuestaBuscarTipo);
+            const url = 'http://localhost:3000/busqueda_tipo/' + busqueda;
+            Http.open("GET", url);
+            Http.send();
+        }
+
+        function respuestaBuscarTipo(){
+            var respuesta = JSON.parse(this.responseText);
+            var mercancias = respuesta["mercancias"]
+            if(mercancias.length > 0) {
+                document.getElementById("rep_nombre").innerHTML = mercancias[0]["nombre"];
+                document.getElementById("rep_descripcion").innerHTML = mercancias[0]["descripcion"];
+            }
+            else {
+                document.getElementById("rep_nombre").innerHTML = "No hay mercancias de ese tipo";
+                document.getElementById("rep_descripcion").innerHTML = "";
+            }
+        }
+    </script>
+</body>
